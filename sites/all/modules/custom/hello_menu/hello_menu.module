@@ -1,0 +1,22 @@
+<?php
+
+/* 
+ * 
+ */
+
+function hello_menu_menu(){
+    $items = array();
+    
+    $items['hello'] = array (
+        'title' => 'Hello World', //don't need a 't' drupal translates title automatically
+        'page callback' => 'hello_menu_simple_hello', //name of function you want to run to return the page
+        'access arguments' => array('access content'),  //get machine name of a permission using firebug
+        'menu_name' => 'main-menu',
+        'weight' => 1, //user can override setting in interface
+    );
+    return $items;
+}
+
+function hello_menu_simple_hello() {
+    return t('Hello World');
+}
