@@ -14,7 +14,52 @@ function hello_menu_menu(){
         'menu_name' => 'main-menu',
         'weight' => 1, //user can override setting in interface
     );
+
+    $items['variables'] = array (
+        'title' => 'Hello Variables', 
+        'page callback' => 'hello_menu_list_variables', 
+        'access arguments' => array('access content'),  
+        'menu_name' => 'main-menu',
+        'weight' => 2, 
+    );    
+    
+    $items['variables/%'] = array (
+        'title callback' => 'hello_menu_show_variables_title', 
+        'title arguments' => array(1),
+        'page callback' => 'hello_menu_show_variables', 
+        'page arguments' => array(1),//pass this to page callback function
+        'access arguments' => array('access content'),  
+        'menu_name' => 'main-menu',
+        'weight' => 3, 
+    );    
+        
+    
     return $items;
+}
+//
+function hello_menu_show_variables_title($variable_name) {
+    return t('Show Variable: @name', array('@name' => $variable_name));
+}
+
+function hello_menu_show_variables ($variable_name) {
+    $value = variable_get($variable_name, t('No value for this variable'));
+    return $value;
+}
+
+function hello_menu_list_variables() {
+    $variables = variable_initialize();
+    $names = array_keys($variables);
+    
+    $output = '<ul>';
+    
+    $output .= '</ul>';
+    //dpm($variables);
+    foreach ($names as $name) {
+     $output .= '<li>' . l($name, 'variables/' . $name, array('attributes' => array('target' => '_blank'))) . '</li>';
+ /   $output .= '<li>' . l($name, 'variables/' . $name, array('attributes' => array('class' => array('class1', 'class2')))) . '</li>';
+   }
+    //return kpr($variables, TRUE);
+    return $output;
 }
 
 function hello_menu_simple_hello() {
