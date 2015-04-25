@@ -9,34 +9,68 @@ function hello_menu_menu(){
     
     $items['hello'] = array (
         'title' => 'Hello World', //don't need a 't' drupal translates title automatically
+        'description' => 'This is my hover text',
         'page callback' => 'hello_menu_simple_hello', //name of function you want to run to return the page
         'access arguments' => array('access content'),  //get machine name of a permission using firebug
         'menu_name' => 'main-menu',
         'weight' => 1, //user can override setting in interface
     );
+    
+    $items['hello/simple'] = array(
+        'title' => 'Simple',
+        'type' => MENU_DEFAULT_LOCAL_TASK,
+        'weight' => -1,
+    );
 
-    $items['variables'] = array (
+    $items['hello/variables'] = array (
         'title' => 'Hello Variables', 
         'page callback' => 'hello_menu_list_variables', 
         'access arguments' => array('access content'),  
-        'menu_name' => 'main-menu',
-        'weight' => 2, 
-    );    
+        'type' => MENU_LOCAL_TASK,
+    );
     
-    $items['variables/%'] = array (
-        'title callback' => 'hello_menu_show_variables_title', 
-        'title arguments' => array(1),
-        'page callback' => 'hello_menu_show_variables', 
-        'page arguments' => array(1),//pass this to page callback function
+    $items['hello/variables/list'] = array (
+        'title' => 'List', 
+        'type' => MENU_DEFAULT_LOCAL_TASK,
+    );
+        
+    $items['hello/variables/create'] = array (
+        'title' => 'Create Variable', 
+        'page callback' => 'hello_menu_create_variables', 
         'access arguments' => array('access content'),  
-        'menu_name' => 'main-menu',
-        'weight' => 3, 
+        'type' => MENU_LOCAL_TASK,
+        'weight' => 0,
+    );  
+    
+    $items['hello/variables/delete'] = array (
+        'title' => 'Delete Variable', 
+        'page callback' => 'hello_menu_delete_variables', 
+        'access arguments' => array('access content'),  
+        'type' => MENU_LOCAL_TASK,
+        'weight' => 1,
+    );  
+    
+    $items['hello/variables/%'] = array (
+        'title callback' => 'hello_menu_show_variables_title', 
+        'title arguments' => array(2),
+        'page callback' => 'hello_menu_show_variables', 
+        'page arguments' => array(2),//pass this to page callback function
+        'access arguments' => array('access content'),  
+        'type' => MENU_CALLBACK,
     );    
         
     
     return $items;
 }
 //
+function hello_menu_delete_variables() {
+    return t('This is variable delete page.');
+}
+
+function hello_menu_create_variables() {
+    return t('This is variable create page.');
+}
+
 function hello_menu_show_variables_title($variable_name) {
     return t('Show Variable: @name', array('@name' => $variable_name));
 }
@@ -55,8 +89,8 @@ function hello_menu_list_variables() {
     $output .= '</ul>';
     //dpm($variables);
     foreach ($names as $name) {
-     $output .= '<li>' . l($name, 'variables/' . $name, array('attributes' => array('target' => '_blank'))) . '</li>';
- /   $output .= '<li>' . l($name, 'variables/' . $name, array('attributes' => array('class' => array('class1', 'class2')))) . '</li>';
+     $output .= '<li>' . l($name, 'hello/variables/' . $name, array('attributes' => array('target' => '_blank'))) . '</li>';
+ //   $output .= '<li>' . l($name, 'hello/variables/' . $name, array('attributes' => array('class' => array('class1', 'class2')))) . '</li>';
    }
     //return kpr($variables, TRUE);
     return $output;
