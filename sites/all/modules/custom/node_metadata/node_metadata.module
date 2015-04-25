@@ -1,0 +1,32 @@
+<?php
+
+/* 
+ * 
+ */
+
+function node_metadata_menu(){
+    $items = array();
+    
+   // $items['node/%/metadata'] = array ( special way to load node add 'node'
+    $items['node/%node/metadata'] = array (
+        'title' => 'Metadata',
+        'description' => 'Node Metadata',
+        'page callback' => 'node_metadata_page',
+        'page arguments' => array(1),
+        'access arguments' => array('view node metadata'),
+        'file' => 'node_metadata.pages.inc',
+        'file path' => drupal_get_path('module', 'node_metadata') . '/includes', //gets root path of your module
+        'type' => MENU_LOCAL_TASK,
+    );
+   return $items;
+}
+
+function node_metadata_permission() {
+  return array(
+    'view node metadata' => array(
+      'title' => t('View Metadata about nodes'),
+      'description' => t('See important node details.'),
+    ),
+  );
+}
+
