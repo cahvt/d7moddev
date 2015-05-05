@@ -1,0 +1,86 @@
+<?php
+
+/* 
+ * 
+ */
+
+function basicform_menu() {
+
+$items = array();
+
+$items['basicform'] = array(
+   'title' => 'Basic Form Example',
+   'page callback' => 'basicform_example_page',
+   'access arguments' => array('acess content'),
+    );
+
+return $items;
+}
+
+function basicform_example_page() {
+    
+    $form = drupal_get_form('basicform_example_form');
+    $output = drupal_render($form);
+    
+    return $output;
+}
+//form element keys always start with #sign
+function basicform_example_form($form, &$form_state) {
+    $form['name'] = array(
+        '#title' => t('Name'),
+        '#type' => 'textfield',
+        '#required' => TRUE,
+    );
+    
+    $form['email'] = array(
+        '#title' => t('Email'),
+        '#type' => 'textfield',
+        '#required' => TRUE,
+    );
+
+    $form['phone'] = array(
+        '#title' => t('Phone'),
+        '#type' => 'textfield',
+    );  
+
+    $form['message'] = array(
+        '#title' => t('Message'),
+        '#type' => 'textarea',
+    );  
+
+    $form['send'] = array(
+        '#type' => 'submit',
+        '#value' => t('Send Feedback'),
+    );
+    
+    return $form;    
+}
+
+//don't need to return anything - form_set_error takes care of it
+function basicform_example_form_validate($form, &$form_state) {
+    $phone_number = $form_state['values']['phone'];
+    $phone_number = preg_replace('/[^0-9]/', '', $phone_number);
+    if(strlen($phone_number) < 10) {
+        form_set_error('phone', t('Please enter 10 digits'));
+    }
+    
+    $email = $form_state['values']['email'];
+    if (!valid_email_address($email)) {
+        form_set_error('email', t('Please enter valid email'));
+    }   
+}
+//status options: status, warning or error
+function basicform_example_form_submit($form, &$form_state) {
+   drupal_set_message(t('Thanks for submitting the form @name!', 
+           array('@name' => $form_state['values']['name'])), 'status');
+}
+
+
+
+
+
+
+
+
+
+

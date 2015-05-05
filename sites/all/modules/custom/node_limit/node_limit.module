@@ -1,0 +1,68 @@
+<?php
+
+/* 
+ * uses hook_menu_alter(&$items) [& means to pass by reference]
+ * hook_alter hook gives every module a chance to alter any route
+ * allows any module to alter hooks of any other module or drupal core
+ * ONLY gets called when the cache is cleared
+ * 
+ * access arguments by default takes user_access function
+ */
+
+function node_limit_menu(){
+    $items = array();
+    
+    $items['node/%node/edit-locked'] = array (
+        'title' => 'Update Locked', 
+        'description' => 'Time for update expired',
+        'page callback' => 'node_limit_locked_page', //name of function you want to run to return the page
+        'access callback' => 'node_limit_node_access_locked',
+        'access arguments' => array(1),
+        'type' => MENU_LOCAL_TASK,
+        'weight' => -1,
+    );
+    return $items;
+}
+
+function node_limit_menu_alter(&$items) {
+    //dpm($items);
+    
+    $items['node/%node/edit']['title callback'] = 'node_limit_node_edit_title';
+    $items['node/%node/edit']['title arguments'] = array(1);
+    $items['node/%node/edit']['weight'] = -1;
+   // $items['node/%node/edit']['access callback'] = 'node_access';
+    //$items['node/%node/edit']['access arguments'] = array('update', 1);
+    $items['node/%node/edit']['access callback'] = 'node_limit_node_edit_access';
+    $items['node/%node/edit']['access arguments'] = array(1);
+    
+}
+
+function node_limit_locked_page() {
+    return t('This node is locked for editing.');
+}
+
+function node_limit_node_edit_title($node) {
+    $time_diff = REQUEST_TIME - $node->changed;
+    $time_left = ceil(((120 * 60) - $time_diff) / 60);
+    
+    if (user_access('administer nodes')) {
+        return t('Update');
+    }
+    return t('Update (@time min left)', array('@time' => $time_left));
+}
+
+function node_limit_node_edit_access($node) {
+    if ($node->changed > (REQUEST_TIME - 120 * 60) || (user_access('administer nodes'))) { //15 minutes ago
+        return node_access('update', $node);
+    }
+    return FALSE;
+}
+
+function node_limit_node_access_locked($node){
+    if ($node->changed > (REQUEST_TIME - 120 * 60)) { 
+        return FALSE;
+    }
+    return node_access('update', $node);
+} 
+
+

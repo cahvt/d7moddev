@@ -1,0 +1,5 @@
+name = Node Limit
+description = Puts time limit on ability to edit a node
+core = 7.x
+package = DrupalTutor
+version = 7.x-1.0
